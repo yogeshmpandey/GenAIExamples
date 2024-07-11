@@ -5,11 +5,11 @@ import asyncio
 import os
 
 from comps import FaqGenGateway, MicroService, ServiceOrchestrator, ServiceType
-
+# 9000->9002
 MEGA_SERVICE_HOST_IP = os.getenv("MEGA_SERVICE_HOST_IP", "0.0.0.0")
 MEGA_SERVICE_PORT = int(os.getenv("MEGA_SERVICE_PORT", 8888))
 LLM_SERVICE_HOST_IP = os.getenv("LLM_SERVICE_HOST_IP", "0.0.0.0")
-LLM_SERVICE_PORT = int(os.getenv("LLM_SERVICE_PORT", 9000))
+LLM_SERVICE_PORT = int(os.getenv("LLM_SERVICE_PORT", 9002))
 
 
 class FaqGenService:
@@ -23,7 +23,7 @@ class FaqGenService:
             name="llm",
             host=LLM_SERVICE_HOST_IP,
             port=LLM_SERVICE_PORT,
-            endpoint="/v1/chat/faqgen",
+            endpoint="/v1/chat/docsum",
             use_remote_service=True,
             service_type=ServiceType.LLM,
         )

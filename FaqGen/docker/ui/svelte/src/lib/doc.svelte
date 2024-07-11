@@ -60,7 +60,7 @@
     formModal = false;
   }
 
-  function generateSummary() {
+  function generateFaq() {
     if ($kb_id === "" && message === "") {
       addNotification({
         text: "Please upload content first",
@@ -72,9 +72,9 @@
     } else {
       loading.set(true);
       if ($kb_id !== "") {
-        dispatch("generateSummary", { mode: "file", value: $kb_id });
+        dispatch("generateFaq", { mode: "file", value: $kb_id });
       } else if (message !== "") {
-        dispatch("generateSummary", { mode: "text", value: message });
+        dispatch("generateFaq", { mode: "text", value: message });
       }
     }
   }
@@ -127,7 +127,7 @@
               data-testid="sum-input"
               id="textarea-id"
               class="xl:h-[30rem] xl:my-4"
-              placeholder="Copy the text information you need to summarize."
+              placeholder="Copy the text information you need to generate FAQs."
               rows="13"
               name="message"
               bind:value={message}
@@ -152,9 +152,9 @@
       type="submit"
       data-testid="sum-click"
       class="xl:my-12 inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 mt-2 focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
-      on:click={() => generateSummary()}
+      on:click={() => generateFaq()}
     >
-      Generate Summary
+      Generate FAQs
     </button>
   {/if}
 </div>

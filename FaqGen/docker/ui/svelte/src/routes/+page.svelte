@@ -17,7 +17,7 @@
 <script lang="ts">
   import Header from "$lib/header.svelte";
   import Doc from "$lib/doc.svelte";
-  import Summary from "$lib/summary.svelte";
+  import Faq from "$lib/faq.svelte";
   import { fetchTextStream } from "$lib/shared/Network.js";
   import { loading } from "$lib/shared/Store.js";
   import { onMount } from "svelte";
@@ -65,7 +65,7 @@
     eventSource.stream();
   };
 
-  async function handleGenerateSummary(e) {
+  async function handleGenerateFaq(e) {
     if (e.detail.mode === "file") {
       await callTextStream(e.detail.value, "/file_summarize", "doc_id");
     } else if (e.detail.mode === "text") {
@@ -82,13 +82,13 @@
 
 <div class="h-full">
   <Header />
-  <p class="m-7 sm:mb-0 text-gray-500 font-semibold xl:m-8">Please upload file or paste content for summarization.</p>
+  <p class="m-7 sm:mb-0 text-gray-500 font-semibold xl:m-8">Please upload file or paste content for FAQ Generation.</p>
   <div class="mt-2 m-6 grid grid-cols-3 gap-8 h-full">
     <div class="col-span-2 h-full">
-      <Doc on:generateSummary={handleGenerateSummary} on:clearMsg={handleClearMsg}/>
+      <Doc on:generateFaq={handleGenerateFaq} on:clearMsg={handleClearMsg}/>
     </div>
     <div class="col-span-1">
-      <Summary chatMessage={messages} />
+      <Faq chatMessage={messages} />
     </div>
   </div>
 </div>

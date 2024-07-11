@@ -16,7 +16,7 @@
 
 <script lang="ts">
   import LoadingAnimation from "./assets/loadingAnimation.svelte";
-  import SummaryLogo from "./assets/summaryLogo.svelte";
+  import faqLogo from "./assets/faqLogo.svelte";
   import { loading } from "./shared/Store.js";
 
   export let chatMessage: any;
@@ -35,10 +35,10 @@
         type="button"
         class="p-2 text-white rounded cursor-pointer dark:text-gray-400"
       >
-        <SummaryLogo />
+        <faqLogo />
         <span class="sr-only">Timeline</span>
       </button>
-      <p>Summary</p>
+      <p>FAQs</p>
     </div>
     {#if chatMessage === "" && $loading}
       <LoadingAnimation />

@@ -1,6 +1,6 @@
-# Build MegaService of Document Summarization on Gaudi
+# Build MegaService of FAQ Generation on Gaudi
 
-This document outlines the deployment process for a Document Summarization application utilizing the [GenAIComps](https://github.com/opea-project/GenAIComps.git) microservice pipeline on Intel Gaudi server. The steps include Docker image creation, container deployment via Docker Compose, and service execution to integrate microservices such as llm. We will publish the Docker images to Docker Hub, which will simplify the deployment process for this service.
+This document outlines the deployment process for a FAQ Generation application utilizing the [GenAIComps](https://github.com/opea-project/GenAIComps.git) microservice pipeline on Intel Gaudi server. The steps include Docker image creation, container deployment via Docker Compose, and service execution to integrate microservices such as llm. We will publish the Docker images to Docker Hub, which will simplify the deployment process for this service.
 
 ## 🚀 Build Docker Images
 

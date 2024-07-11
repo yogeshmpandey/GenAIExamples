@@ -22,10 +22,10 @@ async function enterMessageToChat(page: Page, message: string) {
   await expect(page.getByTestId("display-answer")).not.toBeEmpty();
 }
 
-// Test description: New Doc Summary
-test.describe("New Doc Summary", () => {
-  // Test: Enter message to summary
-  test("should enter message to summary", async ({ page }) => {
+// Test description: New Doc Faq
+test.describe("New FAQ Gen", () => {
+  // Test: Enter message to faq
+  test("should enter message to faq", async ({ page }) => {
     await enterMessageToChat(page, CHAT_ITEMS[0]);
   });
 });

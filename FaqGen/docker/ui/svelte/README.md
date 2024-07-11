@@ -1,4 +1,4 @@
-<h1 align="center" id="title">Doc Summary</h1>
+<h1 align="center" id="title">FAQ Generation</h1>
 
 ### 📸 Project Screenshots
 
@@ -11,9 +11,9 @@
 
 Here're some of the project's features:
 
-- Summarizing Uploaded Files: Upload files from their local device, then click 'Generate Summary' to summarize the content of the uploaded file. The summary will be displayed on the 'Summary' box.
-- Summarizing Text via Pasting: Paste the text to be summarized into the text box, then click 'Generate Summary' to produce a condensed summary of the content, which will be displayed in the 'Summary' box on the right.
-- Scroll to Bottom: The summarized content will automatically scroll to the bottom.
+- Summarizing Uploaded Files: Upload files from their local device, then click 'Generate FAQ' to summarize the content of the uploaded file. The FAQ  will be displayed on the 'FAQ' box.
+- Summarizing Text via Pasting: Paste the text to be summarized into the text box, then click 'Generate FAQ' to produce a condensed FAQ of the content, which will be displayed in the 'FAQ' box on the right.
+- Scroll to Bottom: The FAQ content will automatically scroll to the bottom.
 
 <h2>🛠️ Get it Running:</h2>
 

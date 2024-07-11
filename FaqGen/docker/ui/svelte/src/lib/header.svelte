@@ -26,7 +26,7 @@
     <div class="mx-auto flex flex-wrap justify-end items-center w-full">
       <span
         class="self-center whitespace-nowrap py-2 text-2xl font-semibold text-white ml-4"
-        data-svelte-h="svelte-1hbktnk">Doc Summary</span
+        data-svelte-h="svelte-1hbktnk">FAQ Generation</span
       >
     </div>
   </nav>

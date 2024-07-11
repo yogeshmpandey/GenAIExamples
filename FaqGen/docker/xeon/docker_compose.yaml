@@ -5,11 +5,11 @@
 version: "3.8"
 
 services:
-  tgi_service:
+  tgi_service_faqgen:
     image: ghcr.io/huggingface/text-generation-inference:1.4
-    container_name: tgi_service
+    container_name: tgi_service_faqgen
     ports:
-      - "8008:80"
+      - "8009:80"
     environment:
       no_proxy: ${no_proxy}
       http_proxy: ${http_proxy}
@@ -20,13 +20,13 @@ services:
       - "./data:/data"
     shm_size: 1g
     command: --model-id ${LLM_MODEL_ID}
-  llm:
+  llm_faqgen:
     image: opea/llm-faqgen-tgi:latest
     container_name: llm-faqgen-server
     depends_on:
-      - tgi_service
+      - tgi_service_faqgen
     ports:
-      - "9000:9000"
+      - "9002:9000"
     ipc: host
     environment:
       no_proxy: ${no_proxy}
@@ -42,10 +42,10 @@ services:
     image: opea/faqgen:latest
     container_name: faqgen-xeon-backend-server
     depends_on:
-      - tgi_service
-      - llm
+      - tgi_service_faqgen
+      - llm_faqgen
     ports:
-      - "8888:8888"
+      - "8889:8888"
     environment:
       - no_proxy=${no_proxy}
       - https_proxy=${https_proxy}
@@ -60,7 +60,7 @@ services:
     depends_on:
       - faqgen-xeon-backend-server
     ports:
-      - "5173:5173"
+      - "5176:5173"
     environment:
       - no_proxy=${no_proxy}
       - https_proxy=${https_proxy}

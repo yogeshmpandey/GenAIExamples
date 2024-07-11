@@ -1,6 +1,6 @@
-# Build Mega Service of Document Summarization on Intel Xeon Processor
+# Build Mega Service of FAQ Generation on Intel Xeon Processor
 
-This document outlines the deployment process for a Document Summarization application utilizing the [GenAIComps](https://github.com/opea-project/GenAIComps.git) microservice pipeline on an Intel Xeon server. The steps include Docker image creation, container deployment via Docker Compose, and service execution to integrate microservices such as `llm`. We will publish the Docker images to Docker Hub soon, which will simplify the deployment process for this service.
+This document outlines the deployment process for a FAQ Generation application utilizing the [GenAIComps](https://github.com/opea-project/GenAIComps.git) microservice pipeline on an Intel Xeon server. The steps include Docker image creation, container deployment via Docker Compose, and service execution to integrate microservices such as `llm`. We will publish the Docker images to Docker Hub soon, which will simplify the deployment process for this service.
 
 ## 🚀 Apply Intel Xeon Server on AWS
 
@@ -43,7 +43,7 @@ Build the frontend Docker image via below command:
 
 ```bash
 cd GenAIExamples/FaqGen/docker/ui/
-docker build -t opea/faqgen-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f ./docker/Dockerfile .
+docker build  -t  opea/faqgen-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f ./docker/Dockerfile .
 ```
 
 Then run the command `docker images`, you will have the following Docker Images:
@@ -63,11 +63,13 @@ export no_proxy=${your_no_proxy}
 export http_proxy=${your_http_proxy}
 export https_proxy=${your_http_proxy}
 export LLM_MODEL_ID="Intel/neural-chat-7b-v3-3"
-export TGI_LLM_ENDPOINT="http://${your_ip}:8008"
+#change 8008 ->?8009
+export TGI_LLM_ENDPOINT="http://${your_ip}:8009"
 export HUGGINGFACEHUB_API_TOKEN=${your_hf_api_token}
 export MEGA_SERVICE_HOST_IP=${host_ip}
 export LLM_SERVICE_HOST_IP=${host_ip}
-export BACKEND_SERVICE_ENDPOINT="http://${host_ip}:8888/v1/faqgen"
+#change 8888 ->?8889
+export BACKEND_SERVICE_ENDPOINT="http://${host_ip}:8889/v1/faqgen"
 ```
 
 Note: Please replace with `host_ip` with your external IP address, do not use localhost.
@@ -93,7 +95,7 @@ curl http://${your_ip}:8008/generate \
 2. LLM Microservice
 
 ```bash
-curl http://${your_ip}:9000/v1/chat/faqgen \
+curl http://${your_ip}:9000/v1/chat/docsum \
   -X POST \
   -d '{"query":"Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}' \
   -H 'Content-Type: application/json'

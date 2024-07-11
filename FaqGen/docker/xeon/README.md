@@ -22,7 +22,7 @@ cd GenAIComps
 ### 1. Build LLM Image
 
 ```bash
-docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/summarization/tgi/Dockerfile .
+docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/text-generation/tgi/Dockerfile .
 ```
 
 Then run the command `docker images`, you will have the following four Docker Images:
@@ -34,7 +34,7 @@ To construct the Mega Service, we utilize the [GenAIComps](https://github.com/op
 ```bash
 git clone https://github.com/opea-project/GenAIExamples
 cd GenAIExamples/FaqGen/docker
-docker build -t opea/faqgen:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f Dockerfile .
+docker build --no-cache -t opea/faqgen:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f Dockerfile .
 ```
 
 ### 3. Build UI Docker Image
@@ -43,7 +43,7 @@ Build the frontend Docker image via below command:
 
 ```bash
 cd GenAIExamples/FaqGen/docker/ui/
-docker build  -t  opea/faqgen-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f ./docker/Dockerfile .
+docker build -t opea/faqgen-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f ./docker/Dockerfile .
 ```
 
 Then run the command `docker images`, you will have the following Docker Images:

@@ -23,45 +23,46 @@
   import { onMount } from "svelte";
   import { scrollToBottom } from "$lib/shared/Utils.js";
 
-  let messages = '';
+  let messages = "";
   let scrollToDiv: HTMLDivElement;
 
   onMount(() => {
-    scrollToDiv = document
-		.querySelector("#editor")!
-    console.log('scrollToDiv', scrollToDiv);
+    scrollToDiv = document.querySelector("#editor")!;
+    console.log("scrollToDiv", scrollToDiv);
+  });
 
-  })
+  let code_output: string = "";
+  let query: string = "";
+  let deleteFlag: boolean = false;
 
   const callTextStream = async (
     query: string,
     urlSuffix: string,
-    params: string
+    params: string,
   ) => {
     messages = "";
+    loading.set(true);
     const eventSource = await fetchTextStream(query, urlSuffix, params);
 
     eventSource.addEventListener("message", (e: any) => {
       let Msg = e.data;
-      if (Msg !== "[DONE]") {
-        let res = JSON.parse(Msg);
-        let logs = res.ops;
 
-        logs.forEach((log: { op: string; path: string; value: any }) => {
-          if (log.op === "add") {
-            if (
-              log.value !== "</s>" && log.path.endsWith("/streamed_output/-") && log.path.length > "/streamed_output/-".length
-            ) {
-              messages += log.value;
-              scrollToBottom(scrollToDiv)
-            }
-          }
-        });
-      } else {
+      if (Msg.startsWith("b")) {
+        const trimmedData = Msg.slice(2, -1);
+        if (trimmedData.includes("'''")) {
+          deleteFlag = true;
+        } else if (deleteFlag && trimmedData.includes("\\n")) {
+          deleteFlag = false;
+        } else if (trimmedData !== "</s>" && !deleteFlag) {
+          messages += trimmedData.replace(/\\n/g, "\n");
+        }
+      } else if (Msg === "[DONE]") {
+        //deleteFlag = false;
         loading.set(false);
-        scrollToBottom(scrollToDiv)
+        scrollToBottom(scrollToDiv);
       }
     });
+
     eventSource.stream();
   };
 
@@ -82,10 +83,12 @@
 
 <div class="h-full">
   <Header />
-  <p class="m-7 sm:mb-0 text-gray-500 font-semibold xl:m-8">Please upload file or paste content for FAQ Generation.</p>
+  <p class="m-7 sm:mb-0 text-gray-500 font-semibold xl:m-8">
+    Please upload file or paste content for FAQ Generation.
+  </p>
   <div class="mt-2 m-6 grid grid-cols-3 gap-8 h-full">
     <div class="col-span-2 h-full">
-      <Doc on:generateFaq={handleGenerateFaq} on:clearMsg={handleClearMsg}/>
+      <Doc on:generateFaq={handleGenerateFaq} on:clearMsg={handleClearMsg} />
     </div>
     <div class="col-span-1">
       <Faq chatMessage={messages} />

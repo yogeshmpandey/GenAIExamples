@@ -28,11 +28,11 @@ function start_services() {
     cd $WORKPATH/docker/xeon
 
     export LLM_MODEL_ID="Intel/neural-chat-7b-v3-3"
-    export TGI_LLM_ENDPOINT="http://${ip_address}:8008"
+    export TGI_LLM_ENDPOINT="http://${ip_address}:8009"
     export HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
     export MEGA_SERVICE_HOST_IP=${ip_address}
     export LLM_SERVICE_HOST_IP=${ip_address}
-    export BACKEND_SERVICE_ENDPOINT="http://${ip_address}:8888/v1/faqgen"
+    export BACKEND_SERVICE_ENDPOINT="http://${ip_address}:8889/v1/faqgen"
 
     sed -i "s/backend_address/$ip_address/g" $WORKPATH/docker/ui/svelte/.env
 
@@ -83,7 +83,7 @@ function validate_microservices() {
 
     # tgi for llm service
     validate_services \
-        "${ip_address}:8008/generate" \
+        "${ip_address}:8009/generate" \
         "generated_text" \
         "tgi-llm" \
         "tgi_service" \
@@ -91,7 +91,7 @@ function validate_microservices() {
 
     # llm microservice
     validate_services \
-        "${ip_address}:9000/v1/chat/faqgen" \
+        "${ip_address}:9002/v1/faqgen" \
         "data: " \
         "llm" \
         "llm-faqgen-server" \
@@ -101,11 +101,11 @@ function validate_microservices() {
 function validate_megaservice() {
     # Curl the Mega Service
     validate_services \
-    "${ip_address}:8888/v1/faqgen" \
-    "versatile toolkit" \
+    "${ip_address}:8889/v1/faqgen" \
+    "Text Embeddings Inference" \
     "mega-faqgen" \
     "faqgen-xeon-backend-server" \
-    '{"messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}'
+    '{"messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5.", stream=False}'
 }
 
 function validate_frontend() {
@@ -146,7 +146,7 @@ function main() {
 
     stop_docker
 
-    if [[ "$IMAGE_REPO" == "" ]]; then build_docker_images; fi
+    # if [[ "$IMAGE_REPO" == "" ]]; then build_docker_images; fi
     start_services
 
     validate_microservices

@@ -1,14 +1,8 @@
 # FAQ Generation Application
 
-In a world where data, information, and legal complexities are prevalent, the volume of legal documents is growing rapidly. Law firms, legal professionals, and businesses are dealing with an ever-increasing number of legal texts, including contracts, court rulings, statutes, and regulations. These documents contain important insights, but understanding them can be overwhelming. This is where the demand for legal FAQ Generation comes in.
+In today's data-driven world, organizations across various industries face the challenge of managing and understanding vast amounts of information. Legal documents, contracts, regulations, and customer inquiries often contain critical insights buried within dense text. Extracting and presenting these insights in a concise and accessible format is crucial for decision-making, compliance, and customer satisfaction.
 
-Large Language Models (LLMs) have revolutionized the way we interact with text. These models can be used to create summaries of news articles, research papers, technical documents, and other types of text. Suppose you have a set of documents (PDFs, Notion pages, customer questions, etc.) and you want to summarize the content. In this example use case, we utilize LangChain to implement FAQ Generation strategies and facilitate LLM inference using Text Generation Inference on Intel Xeon and Gaudi2 processors.
-
-The architecture for FAQ Generation will be illustrated/described below:
-
-![Architecture](./assets/img/faqgen_architecture.png)
-
-![Workflow](./assets/img/faqgen_workflow.png)
+Our FAQ Generation Application leverages the power of large language models (LLMs) to revolutionize the way you interact with and comprehend complex textual data. By harnessing cutting-edge natural language processing techniques, our application can automatically generate comprehensive and natural-sounding frequently asked questions (FAQs) from your documents, legal texts, customer queries, and other sources. In this example use case, we utilize LangChain to implement FAQ Generation and facilitate LLM inference using Text Generation Inference on Intel Xeon and Gaudi2 processors.
 
 # Deploy FAQ Generation Service
 

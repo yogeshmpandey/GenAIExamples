@@ -2,17 +2,14 @@
 
 ### 📸 Project Screenshots
 
-![project-screenshot](../../../assets/img/docSum_ui_upload.png)
-![project-screenshot](../../../assets/img/docSum_ui_exchange.png)
-![project-screenshot](../../../assets/img/docSum_ui_response.png)
-![project-screenshot](../../../assets/img/docSum_ui_text.png)
+![project-screenshot](../../../assets/img/faqgen_ui_text.png)
 
 <h2>🧐 Features</h2>
 
 Here're some of the project's features:
 
-- Summarizing Uploaded Files: Upload files from their local device, then click 'Generate FAQ' to summarize the content of the uploaded file. The FAQ  will be displayed on the 'FAQ' box.
-- Summarizing Text via Pasting: Paste the text to be summarized into the text box, then click 'Generate FAQ' to produce a condensed FAQ of the content, which will be displayed in the 'FAQ' box on the right.
+- Generate FAQs from Text via Pasting: Paste the text to into the text box, then click 'Generate FAQ' to produce a condensed FAQ of the content, which will be displayed in the 'FAQ' box on the right.
+
 - Scroll to Bottom: The FAQ content will automatically scroll to the bottom.
 
 <h2>🛠️ Get it Running:</h2>

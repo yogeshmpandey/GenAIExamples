@@ -22,7 +22,7 @@ cd GenAIComps
 ### 1. Build LLM Image
 
 ```bash
-docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/text-generation/tgi/Dockerfile .
+docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/faq-generation/tgi/Dockerfile .
 ```
 
 Then run the command `docker images`, you will have the following four Docker Images:
@@ -63,12 +63,10 @@ export no_proxy=${your_no_proxy}
 export http_proxy=${your_http_proxy}
 export https_proxy=${your_http_proxy}
 export LLM_MODEL_ID="Intel/neural-chat-7b-v3-3"
-#change 8008 ->?8009
 export TGI_LLM_ENDPOINT="http://${your_ip}:8009"
 export HUGGINGFACEHUB_API_TOKEN=${your_hf_api_token}
 export MEGA_SERVICE_HOST_IP=${host_ip}
 export LLM_SERVICE_HOST_IP=${host_ip}
-#change 8888 ->?8889
 export BACKEND_SERVICE_ENDPOINT="http://${host_ip}:8889/v1/faqgen"
 ```
 
@@ -86,7 +84,7 @@ docker compose -f docker_compose.yaml up -d
 1. TGI Service
 
 ```bash
-curl http://${your_ip}:8008/generate \
+curl http://${host_ip}:8008/generate \
   -X POST \
   -d '{"inputs":"What is Deep Learning?","parameters":{"max_new_tokens":17, "do_sample": true}}' \
   -H 'Content-Type: application/json'
@@ -95,7 +93,7 @@ curl http://${your_ip}:8008/generate \
 2. LLM Microservice
 
 ```bash
-curl http://${your_ip}:9000/v1/chat/docsum \
+curl http://${host_ip}:9002/v1/chat/faqgen \
   -X POST \
   -d '{"query":"Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}' \
   -H 'Content-Type: application/json'
@@ -104,7 +102,7 @@ curl http://${your_ip}:9000/v1/chat/docsum \
 3. MegaService
 
 ```bash
-curl http://${host_ip}:8888/v1/faqgen -H "Content-Type: application/json" -d '{
+curl http://${host_ip}:8889/v1/faqgen -H "Content-Type: application/json" -d '{
      "messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."
      }'
 ```

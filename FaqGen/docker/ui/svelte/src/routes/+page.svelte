@@ -41,28 +41,31 @@
     params: string,
   ) => {
     messages = "";
-    loading.set(true);
     const eventSource = await fetchTextStream(query, urlSuffix, params);
 
     eventSource.addEventListener("message", (e: any) => {
       let Msg = e.data;
+      if (Msg !== "[DONE]") {
+        let res = JSON.parse(Msg);
+        let logs = res.ops;
 
-      if (Msg.startsWith("b")) {
-        const trimmedData = Msg.slice(2, -1);
-        if (trimmedData.includes("'''")) {
-          deleteFlag = true;
-        } else if (deleteFlag && trimmedData.includes("\\n")) {
-          deleteFlag = false;
-        } else if (trimmedData !== "</s>" && !deleteFlag) {
-          messages += trimmedData.replace(/\\n/g, "\n");
-        }
-      } else if (Msg === "[DONE]") {
-        //deleteFlag = false;
+        logs.forEach((log: { op: string; path: string; value: any }) => {
+          if (log.op === "add") {
+            if (
+              log.value !== "</s>" &&
+              log.path.endsWith("/streamed_output/-") &&
+              log.path.length > "/streamed_output/-".length
+            ) {
+              messages += log.value;
+              scrollToBottom(scrollToDiv);
+            }
+          }
+        });
+      } else {
         loading.set(false);
         scrollToBottom(scrollToDiv);
       }
     });
-
     eventSource.stream();
   };
 

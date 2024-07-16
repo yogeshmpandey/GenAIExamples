@@ -84,7 +84,7 @@ docker compose -f docker_compose.yaml up -d
 1. TGI Service
 
 ```bash
-curl http://${host_ip}:8008/generate \
+curl http://${host_ip}:8009/generate \
   -X POST \
   -d '{"inputs":"What is Deep Learning?","parameters":{"max_new_tokens":17, "do_sample": true}}' \
   -H 'Content-Type: application/json'
@@ -93,7 +93,7 @@ curl http://${host_ip}:8008/generate \
 2. LLM Microservice
 
 ```bash
-curl http://${host_ip}:9002/v1/chat/faqgen \
+curl http://${host_ip}:9002/v1/faqgen \
   -X POST \
   -d '{"query":"Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}' \
   -H 'Content-Type: application/json'
@@ -130,6 +130,6 @@ export LANGCHAIN_API_KEY=ls_...
 
 ## 🚀 Launch the UI
 
-Open this URL `http://{host_ip}:5173` in your browser to access the frontend.
+Open this URL `http://{host_ip}:5176` in your browser to access the frontend.
 
-![project-screenshot](../../assets/img/docSum_ui_text.png)
+![project-screenshot](../../assets/img/faqgen_ui_text.png)

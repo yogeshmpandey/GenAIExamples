@@ -22,7 +22,7 @@ docker pull ghcr.io/huggingface/tgi-gaudi:1.2.1
 ### 2. Build LLM Image
 
 ```bash
-docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/summarization/tgi/Dockerfile .
+docker build -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/faq-generation/tgi/Dockerfile .
 ```
 
 ### 3. Build MegaService Docker Image
@@ -62,11 +62,11 @@ export no_proxy=${your_no_proxy}
 export http_proxy=${your_http_proxy}
 export https_proxy=${your_http_proxy}
 export LLM_MODEL_ID="Intel/neural-chat-7b-v3-3"
-export TGI_LLM_ENDPOINT="http://${your_ip}:8008"
+export TGI_LLM_ENDPOINT="http://${your_ip}:8009"
 export HUGGINGFACEHUB_API_TOKEN=${your_hf_api_token}
 export MEGA_SERVICE_HOST_IP=${host_ip}
 export LLM_SERVICE_HOST_IP=${host_ip}
-export BACKEND_SERVICE_ENDPOINT="http://${host_ip}:8888/v1/faqgen"
+export BACKEND_SERVICE_ENDPOINT="http://${host_ip}:8889/v1/faqgen"
 ```
 
 Note: Please replace with `host_ip` with your external IP address, do not use localhost.
@@ -83,7 +83,7 @@ docker compose -f docker_compose.yaml up -d
 1. TGI Service
 
 ```bash
-curl http://${your_ip}:8008/generate \
+curl http://${your_ip}:8009/generate \
   -X POST \
   -d '{"inputs":"What is Deep Learning?","parameters":{"max_new_tokens":64, "do_sample": true}}' \
   -H 'Content-Type: application/json'
@@ -92,7 +92,7 @@ curl http://${your_ip}:8008/generate \
 2. LLM Microservice
 
 ```bash
-curl http://${your_ip}:9000/v1/chat/faqgen \
+curl http://${host_ip}:9002/v1/faqgen \
   -X POST \
   -d '{"query":"Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}' \
   -H 'Content-Type: application/json'
@@ -101,7 +101,7 @@ curl http://${your_ip}:9000/v1/chat/faqgen \
 3. MegaService
 
 ```bash
-curl http://${host_ip}:8888/v1/faqgen -H "Content-Type: application/json" -d '{
+curl http://${host_ip}:8889/v1/faqgen -H "Content-Type: application/json" -d '{
      "messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."
      }'
 ```
@@ -127,10 +127,7 @@ export LANGCHAIN_API_KEY=ls_...
 
 ## 🚀 Launch the UI
 
-Open this URL `http://{host_ip}:5173` in your browser to access the frontend.
+Open this URL `http://{host_ip}:5176` in your browser to access the frontend.
 
-![project-screenshot](https://github.com/intel-ai-tce/GenAIExamples/assets/21761437/93b1ed4b-4b76-4875-927e-cc7818b4825b)
 
-Here is an example for summarizing a article.
-
-![image](https://github.com/intel-ai-tce/GenAIExamples/assets/21761437/67ecb2ec-408d-4e81-b124-6ded6b833f55)
+![project-screenshot](../../assets/img/faqgen_ui_text.png)

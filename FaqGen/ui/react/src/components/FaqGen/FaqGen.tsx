@@ -17,6 +17,17 @@ const FaqGen = () => {
     const [fileContent, setFileContent] = useState<string>('');
     const [response, setResponse] = useState<string>('');
     
+    let messagesEnd:HTMLDivElement;
+
+    const scrollToView = () => {
+        if (messagesEnd) {
+            messagesEnd.scrollTop = messagesEnd.scrollHeight;
+        }
+    };
+    useEffect(()=>{
+        scrollToView()
+    },[response])
+    
     useEffect(() => {
         if(isFile){
             setValue('')
@@ -139,7 +150,10 @@ const FaqGen = () => {
                         <Button loading={isGenerating} loaderProps={{ type: 'dots' }} onClick={handleSubmit}>Generate FAQ's</Button>
                     </div>
                     {response && (
-                        <div className={styleClasses.faqGenResult}>
+                        <div className={styleClasses.faqGenResult} ref={(el) => {
+                            if(el)
+                                messagesEnd = el;
+                        }}>
                             <Markdown content={response} />
                         </div>
                     )}

@@ -9,16 +9,24 @@ LOG_PATH="$WORKPATH/tests"
 ip_address=$(hostname -I | awk '{print $1}')
 
 function build_docker_images() {
-    cd $WORKPATH
-    git clone https://github.com/opea-project/GenAIComps.git
+    cd $WORKPATH/../../
+
+    if [ ! -d "GenAIComps" ] ; then
+        git clone https://github.com/opea-project/GenAIComps.git
+    fi
     cd GenAIComps
+    local CUR=$(git branch --show-current)
+    echo "Check to FAQGen component, Current Branch is ${CUR}"
+    if [ "${CUR}" != "PR318" ] ; then
+        git fetch origin pull/318/head:PR318; git checkout PR318
+    fi
 
-    docker build --no-cache -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/summarization/tgi/Dockerfile .
+    docker build --no-cache -t opea/llm-faqgen-tgi:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f comps/llms/faq-generation/tgi/Dockerfile .
 
-    cd $WORKPATH/docker
-    docker build --no-cache -t opea/faqgen:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f Dockerfile .
+    cd $WORKPATH/../../
+    docker build --no-cache -t opea/faqgen:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f GenAIExamples/FaqGen/docker/Dockerfile .
 
-    cd $WORKPATH/docker/ui
+    cd $WORKPATH/GenAIExamples/FaqGen/docker/ui
     docker build --no-cache -t opea/faqgen-ui:latest --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy -f docker/Dockerfile .
 
     docker images
@@ -105,7 +113,7 @@ function validate_megaservice() {
     "Text Embeddings Inference" \
     "mega-faqgen" \
     "faqgen-xeon-backend-server" \
-    '{"messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5.", stream=False}'
+    '{"messages": "Text Embeddings Inference (TEI) is a toolkit for deploying and serving open source text embeddings and sequence classification models. TEI enables high-performance extraction for the most popular models, including FlagEmbedding, Ember, GTE and E5."}'
 }
 
 function validate_frontend() {
@@ -146,7 +154,7 @@ function main() {
 
     stop_docker
 
-    # if [[ "$IMAGE_REPO" == "" ]]; then build_docker_images; fi
+    build_docker_images
     start_services
 
     validate_microservices

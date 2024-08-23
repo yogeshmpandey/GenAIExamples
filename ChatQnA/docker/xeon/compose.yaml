@@ -2,29 +2,41 @@
 # SPDX-License-Identifier: Apache-2.0
 
 services:
-  redis-vector-db:
-    image: redis/redis-stack:7.2.0-v9
-    container_name: redis-vector-db
+  pgvector-vector-db:
+    hostname: db
+    container_name: pgvector-vector-db
+    image: pgvector/pgvector:0.7.0-pg16
     ports:
-      - "6379:6379"
-      - "8001:8001"
-  dataprep-redis-service:
-    image: ${REGISTRY:-opea}/dataprep-redis:${TAG:-latest}
-    container_name: dataprep-redis-server
-    depends_on:
-      - redis-vector-db
-      - tei-embedding-service
+      - "5432:5432"
+    restart: always
+    ipc: host
+    environment:
+      - POSTGRES_DB=vectordb
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpwd
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - no_proxy= ${no_proxy}
+      - http_proxy= ${http_proxy}
+      - https_proxy= ${https_proxy}
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  dataprep-pgvector:
+    image: opea/dataprep-pgvector:comps
+    container_name: dataprep-pgvector
     ports:
       - "6007:6007"
+    ipc: host
     environment:
-      no_proxy: ${no_proxy}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
-      REDIS_URL: ${REDIS_URL}
-      REDIS_HOST: ${REDIS_HOST}
+      PG_CONNECTION_STRING: ${PG_CONNECTION_STRING}
       INDEX_NAME: ${INDEX_NAME}
-      TEI_ENDPOINT: ${TEI_EMBEDDING_ENDPOINT}
       HUGGINGFACEHUB_API_TOKEN: ${HUGGINGFACEHUB_API_TOKEN}
+      TEI_ENDPOINT: ${TEI_ENDPOINT}
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
+    restart: unless-stopped
+
   tei-embedding-service:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.5
     container_name: tei-embedding-server
@@ -38,6 +50,7 @@ services:
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
     command: --model-id ${EMBEDDING_MODEL_ID} --auto-truncate
+
   embedding:
     image: ${REGISTRY:-opea}/embedding-tei:${TAG:-latest}
     container_name: embedding-tei-server
@@ -52,23 +65,20 @@ services:
       https_proxy: ${https_proxy}
       TEI_EMBEDDING_ENDPOINT: ${TEI_EMBEDDING_ENDPOINT}
     restart: unless-stopped
+
   retriever:
-    image: ${REGISTRY:-opea}/retriever-redis:${TAG:-latest}
-    container_name: retriever-redis-server
-    depends_on:
-      - redis-vector-db
+    image: opea/retriever-pgvector:comps
+    container_name: retriever-pgvector
     ports:
       - "7000:7000"
     ipc: host
     environment:
-      no_proxy: ${no_proxy}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
-      REDIS_URL: ${REDIS_URL}
-      INDEX_NAME: ${INDEX_NAME}
-      TEI_EMBEDDING_ENDPOINT: ${TEI_EMBEDDING_ENDPOINT}
-      HUGGINGFACEHUB_API_TOKEN: ${HUGGINGFACEHUB_API_TOKEN}
+      PG_CONNECTION_STRING: ${PG_CONNECTION_STRING}
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
     restart: unless-stopped
+
   tei-reranking-service:
     image: ghcr.io/huggingface/text-embeddings-inference:cpu-1.5
     container_name: tei-reranking-server
@@ -102,27 +112,33 @@ services:
       HF_HUB_DISABLE_PROGRESS_BARS: 1
       HF_HUB_ENABLE_HF_TRANSFER: 0
     restart: unless-stopped
-  tgi-service:
-    image: ghcr.io/huggingface/text-generation-inference:sha-e4201f4-intel-cpu
-    container_name: tgi-service
+  vllm-service:
+    image: vllm-openvino:comps
+    container_name: vllm-openvino-server
     ports:
       - "9009:80"
     volumes:
       - "./data:/data"
-    shm_size: 1g
     environment:
       no_proxy: ${no_proxy}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
       HF_TOKEN: ${HUGGINGFACEHUB_API_TOKEN}
-      HF_HUB_DISABLE_PROGRESS_BARS: 1
-      HF_HUB_ENABLE_HF_TRANSFER: 0
-    command: --model-id ${LLM_MODEL_ID} --cuda-graphs 0
+      HABANA_VISIBLE_DEVICES: all
+      OMPI_MCA_btl_vader_single_copy_mechanism: none
+      LLM_MODEL: ${LLM_MODEL}
+    cap_add:
+      - SYS_NICE
+    ipc: host
+    command: /bin/bash -c "export VLLM_CPU_KVCACHE_SPACE=40 && python3 -m vllm.entrypoints.openai.api_server --enforce-eager --model $LLM_MODEL --tensor-parallel-size 1 --host 0.0.0.0 --port 80"
+
+    #command: /bin/bash -c "export VLLM_CPU_KVCACHE_SPACE=40 && python3 -m vllm.entrypoints.openai.api_server --enforce-eager --model $LLM_MODEL --chat-template /workspace/vllm/examples/template_chatml.jinja --host 0.0.0.0 --port 80"
+
   llm:
-    image: ${REGISTRY:-opea}/llm-tgi:${TAG:-latest}
-    container_name: llm-tgi-server
+    image: opea/llm-vllm:latest
+    container_name: llm-vllm-server
     depends_on:
-      - tgi-service
+      - vllm-service
     ports:
       - "9000:9000"
     ipc: host
@@ -130,11 +146,11 @@ services:
       no_proxy: ${no_proxy}
       http_proxy: ${http_proxy}
       https_proxy: ${https_proxy}
-      TGI_LLM_ENDPOINT: ${TGI_LLM_ENDPOINT}
+      vLLM_ENDPOINT: ${vLLM_ENDPOINT}
       HUGGINGFACEHUB_API_TOKEN: ${HUGGINGFACEHUB_API_TOKEN}
-      HF_HUB_DISABLE_PROGRESS_BARS: 1
-      HF_HUB_ENABLE_HF_TRANSFER: 0
+      LLM_MODEL: ${LLM_MODEL}
     restart: unless-stopped
+
   chaqna-xeon-backend-server:
     image: ${REGISTRY:-opea}/chatqna:${TAG:-latest}
     container_name: chatqna-xeon-backend-server
@@ -178,7 +194,18 @@ services:
       - DELETE_FILE=${DATAPREP_DELETE_FILE_ENDPOINT}
     ipc: host
     restart: always
-
+  chaqna-xeon-conversation-ui-server:
+    image: opea/chatqna-conversation-ui:latest
+    container_name: chatqna-xeon-conversation-ui-server
+    environment:
+      - APP_BACKEND_SERVICE_ENDPOINT=${BACKEND_SERVICE_ENDPOINT}
+      - APP_DATA_PREP_SERVICE_URL=${DATAPREP_SERVICE_ENDPOINT}
+    ports:
+      - "5174:80"
+    depends_on:
+      - chaqna-xeon-backend-server
+    ipc: host
+    restart: always
 networks:
   default:
     driver: bridge
